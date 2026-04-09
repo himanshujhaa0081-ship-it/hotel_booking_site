@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StayIndia — Premium Hotel Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- CANCEL MODAL -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <h3>Cancel Booking</h3>
+    <p>Are you sure you want to cancel this booking? This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Keep Booking</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmCancel()" style="background:#ef4444">Yes, Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: HOME ==================== -->
+<div id="page-home" class="page active">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div><i class="fa fa-phone"></i> &nbsp;+91 98765 43210 &nbsp;|&nbsp; <i class="fa fa-envelope"></i> &nbsp;hello@stayindia.com</div>
+      <div id="topbar-auth">
+        <a href="#" onclick="showPage('page-login')">Login</a>
+        <a href="#" onclick="showPage('page-register')">Register</a>
+      </div>
+      <div id="topbar-user" class="hidden">
+        <span id="topbar-username" style="color:#fff"></span>
+        <a href="#" onclick="logout()" style="margin-left:12px">Logout</a>
+      </div>
+    </div>
+  </div>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="#" onclick="showPage('page-home')">
+        <div class="logo-icon"><i class="fa fa-hotel"></i></div>
+       BOOk <span>ME</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#" class="active" onclick="showPage('page-home')">Home</a></li>
+        <li><a href="#" onclick="scrollToHotels()">Hotels</a></li>
+        <li><a href="#" onclick="scrollToCities()">Cities</a></li>
+        <li id="nav-dashboard-link" class="hidden"><a href="#" onclick="showDashboard()">My Bookings</a></li>
+        <li id="nav-admin-link" class="hidden"><a href="#" onclick="showPage('page-admin')">Admin</a></li>
+      </ul>
+      <div class="nav-actions">
+        <span id="nav-auth-btns">
+          <button class="btn btn-outline btn-sm" onclick="showPage('page-login')">Login</button>
+          <button class="btn btn-primary btn-sm" onclick="showPage('page-register')">Book Now</button>
+        </span>
+        <span id="nav-user-btn" class="hidden">
+          <button class="btn btn-primary btn-sm" onclick="showDashboard()"><i class="fa fa-user"></i> <span id="nav-user-name"></span></button>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <div class="hero-inner">
+
+    <div class="hero-badge">
+      <i class="fa fa-star"></i> Premium Hotel Booking
+    </div>
+
+    <h1>
+      Find Your Perfect <span>Stay</span> Across India
+    </h1>
+
+    <p>
+      Discover luxury hotels, heritage palaces, and budget stays in India's
+      most popular destinations. Book your dream stay today.
+    </p>
+
+    <!-- SEARCH BAR -->
+    <div class="search-bar">
+
+      <div class="search-group">
+        <label>Search by City</label>
+        <select id="search-city">
+          <option value="">Select City</option>
+          <option value="Ahmedabad">Ahmedabad</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Delhi">Delhi</option>
+          <option value="Goa">Goa</option>
+          <option value="Bengaluru">Bengaluru</option>
+        </select>
+      </div>
+
+      <div class="search-group">
+        <label>Check-in</label>
+        <input type="date" id="search-checkin">
+      </div>
+
+      <div class="search-group">
+        <label>Check-out</label>
+        <input type="date" id="search-checkout">
+      </div>
+
+      <div class="search-group">
+        <label>Guests</label>
+        <select id="search-guests">
+          <option>1 Guest</option>
+          <option>2 Guests</option>
+          <option>3 Guests</option>
+          <option>4+ Guests</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="executeSearch(true)">
+        <i class="fa fa-search"></i> Search
+      </button>
+
+    </div>
+
+  </div>
+</section>
+
+  <!-- PROPERTY TYPES -->
+  <section class="types-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge"><i class="fa fa-th-large"></i> PROPERTY TYPES</div>
+        <h2>Explore Accommodation Types</h2>
+        <p>From luxury suites to cosy budget rooms, find what suits you best</p>
+      </div>
+      <div class="types-grid">
+        <div class="type-card" onclick="filterByType('Luxury')">
+          <div class="type-icon"><i class="fa fa-crown"></i></div>
+          <h4>Luxury Hotels</h4>
+          <p>28 Properties</p>
+        </div>
+        <div class="type-card" onclick="filterByType('Resort')">
+          <div class="type-icon"><i class="fa fa-umbrella-beach"></i></div>
+          <h4>Resorts</h4>
+          <p>15 Properties</p>
+        </div>
+        <div class="type-card" onclick="filterByType('Business')">
+          <div class="type-icon"><i class="fa fa-briefcase"></i></div>
+          <h4>Business Hotels</h4>
+          <p>34 Properties</p>
+        </div>
+        <div class="type-card" onclick="filterByType('Heritage')">
+          <div class="type-icon"><i class="fa fa-monument"></i></div>
+          <h4>Heritage Hotels</h4>
+          <p>12 Properties</p>
+        </div>
+        <div class="type-card" onclick="filterByType('Budget')">
+          <div class="type-icon"><i class="fa fa-tag"></i></div>
+          <h4>Budget Stays</h4>
+          <p>42 Properties</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED HOTELS -->
+  <section class="hotels-section" id="hotels-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge"><i class="fa fa-hotel"></i> FEATURED PROPERTIES</div>
+        <h2>Top Hotels in India</h2>
+        <p>Handpicked stays for every traveller</p>
+      </div>
+      <div class="hotels-grid" id="hotels-grid"></div>
+    </div>
+  </section>
+
+  <!-- CITIES -->
+  <section class="cities-section" id="cities-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge"><i class="fa fa-map-marker-alt"></i> DESTINATIONS</div>
+        <h2>Popular Cities</h2>
+        <p>Discover India's most amazing destinations</p>
+      </div>
+      <div class="cities-grid">
+        <div class="city-card" onclick="filterByCity('Mumbai')">
+          <img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600&q=80" alt="Mumbai">
+          <div class="city-overlay"><div class="city-info"><h4>Mumbai</h4><p>18 Hotels</p></div></div>
+        </div>
+        <div class="city-card" onclick="filterByCity('Delhi')">
+          <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=80" alt="Delhi">
+          <div class="city-overlay"><div class="city-info"><h4>Delhi</h4><p>24 Hotels</p></div></div>
+        </div>
+        <div class="city-card" onclick="filterByCity('Ahmedabad ')">
+          <img src="https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=600&q=80" alt="Ahemdabad">
+          <div class="city-overlay"><div class="city-info"><h4>Ahmedabad </h4><p>16 Hotels</p></div></div>
+        </div>
+        <div class="city-card" onclick="filterByCity('Goa')">
+          <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80" alt="Goa">
+          <div class="city-overlay"><div class="city-info"><h4>Goa</h4><p>21 Hotels</p></div></div>
+        </div>
+        <div class="city-card" onclick="filterByCity('Bengaluru')">
+          <img src="https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=600&q=80" alt="Bengaluru">
+          <div class="city-overlay"><div class="city-info"><h4>Bengaluru</h4><p>19 Hotels</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><div class="logo-icon" style="background:var(--orange)"><i class="fa fa-hotel"></i></div>&nbsp;Stay<span style="color:var(--orange)">India</span></div>
+          <p>Your premium hotel booking partner across India. Discover luxury stays, heritage properties, and budget-friendly options in top cities.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Our Hotels</a></li>
+            <li><a href="#">Special Offers</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Cities</h4>
+          <ul>
+            <li><a href="#" onclick="filterByCity('Mumbai')">Mumbai</a></li>
+            <li><a href="#" onclick="filterByCity('Delhi')">Delhi</a></li>
+            <li><a href="#" onclick="filterByCity('Ahmed')">Ahmedabad </a></li>
+            <li><a href="#" onclick="filterByCity('Goa')">Goa</a></li>
+            <li><a href="#" onclick="filterByCity('Bengaluru')">Bengaluru</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Cancellation Policy</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 StayIndia. All rights reserved.</span>
+        <span>Made with <i class="fa fa-heart" style="color:var(--orange)"></i> in India</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ==================== PAGE: LOGIN ==================== -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-bg"></div>
+    <div class="auth-content">
+      <div class="auth-brand">
+        <div class="logo" style="color:#fff;margin-bottom:20px"><div class="logo-icon" style="background:var(--orange)"><i class="fa fa-hotel"></i></div>&nbsp;Stay<span style="color:var(--orange)">India</span></div>
+        <h1>Welcome Back,<br>Traveller!</h1>
+        <p>Log in to manage your bookings, view your stay history, and access exclusive member deals across India.</p>
+      </div>
+      <div class="form-card">
+        <h2>Sign In</h2>
+        <p>Enter your credentials to continue</p>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">Sign In</button>
+        <p style="text-align:center;margin-top:16px;font-size:14px;color:var(--text-sub)">Don't have an account? <button class="form-link" onclick="showPage('page-register')">Register</button></p>
+        <p style="text-align:center;margin-top:8px;font-size:13px;color:var(--text-sub)">
+          <em>Admin: admin@stayindia.com / admin123</em>
+        </p>
+        <button class="btn btn-outline btn-sm" style="margin-top:12px;width:100%;justify-content:center" onclick="showPage('page-home')">← Back to Home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: REGISTER ==================== -->
+<div id="page-register" class="page">
+  <div class="auth-page">
+    <div class="auth-bg"></div>
+    <div class="auth-content">
+      <div class="auth-brand">
+        <div class="logo" style="color:#fff;margin-bottom:20px"><div class="logo-icon" style="background:var(--orange)"><i class="fa fa-hotel"></i></div>&nbsp;Stay<span style="color:var(--orange)">India</span></div>
+        <h1>Start Your Journey<br>Across India</h1>
+        <p>Create an account to unlock exclusive deals and manage all your hotel bookings in one place.</p>
+      </div>
+      <div class="form-card">
+        <h2>Create Account</h2>
+        <p>Join thousands of happy travellers</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="reg-fname" placeholder="Rahul">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="reg-lname" placeholder="Sharma">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="reg-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="reg-phone" placeholder="+91 98765 43210">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="Min. 6 characters">
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doRegister()">Create Account</button>
+        <p style="text-align:center;margin-top:16px;font-size:14px;color:var(--text-sub)">Already have an account? <button class="form-link" onclick="showPage('page-login')">Sign In</button></p>
+        <button class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;justify-content:center" onclick="showPage('page-home')">← Back to Home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: HOTEL DETAIL ==================== -->
+<div id="page-hotel" class="page">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div><i class="fa fa-phone"></i> &nbsp;+91 98765 43210</div>
+      <div id="hotel-topbar-user"></div>
+    </div>
+  </div>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="#" onclick="showPage('page-home')"><div class="logo-icon"><i class="fa fa-hotel"></i></div>Stay<span>India</span></a>
+      <div class="nav-actions">
+        <button class="btn btn-outline btn-sm" onclick="showPage('page-home')">← Back to Hotels</button>
+        <button class="btn btn-primary btn-sm" id="hotel-page-user-btn" onclick="showDashboard()"></button>
+      </div>
+    </div>
+  </nav>
+  <div id="hotel-detail-content"></div>
+</div>
+
+<!-- ==================== PAGE: BOOKING ==================== -->
+<div id="page-booking" class="page">
+  <div class="topbar"><div class="topbar-inner"><div><i class="fa fa-phone"></i> &nbsp;+91 98765 43210</div></div></div>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="#" onclick="showPage('page-home')"><div class="logo-icon"><i class="fa fa-hotel"></i></div>Stay<span>India</span></a>
+      <div class="nav-actions">
+        <button class="btn btn-outline btn-sm" id="back-to-hotel-btn">← Back to Hotel</button>
+        <button class="btn btn-primary btn-sm" onclick="showDashboard()"><i class="fa fa-user"></i> My Bookings</button>
+      </div>
+    </div>
+  </nav>
+  <div class="container" style="padding-top:36px;padding-bottom:60px">
+    <div class="booking-layout">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:28px;color:var(--navy);margin-bottom:24px">Complete Your Booking</h2>
+        <div class="form-card" style="max-width:100%">
+          <h3 style="font-size:18px;font-weight:700;color:var(--navy);margin-bottom:16px">Guest Information</h3>
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" id="book-fname" placeholder="Rahul"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" id="book-lname" placeholder="Sharma"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Email</label><input type="email" id="book-email" placeholder="you@example.com"></div>
+            <div class="form-group"><label>Phone</label><input type="tel" id="book-phone" placeholder="+91 98765 43210"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Check-in Date</label><input type="date" id="book-checkin"></div>
+            <div class="form-group"><label>Check-out Date</label><input type="date" id="book-checkout"></div>
+          </div>
+          <div class="form-group"><label>Number of Guests</label>
+            <select id="book-guests">
+              <option>1 Guest</option><option>2 Guests</option><option>3 Guests</option><option>4 Guests</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Special Requests (Optional)</label>
+            <input type="text" id="book-requests" placeholder="Early check-in, extra pillows...">
+          </div>
+
+          <h3 style="font-size:18px;font-weight:700;color:var(--navy);margin:24px 0 16px">Payment Method</h3>
+          <div class="payment-methods">
+            <div class="pay-method selected" onclick="selectPayment(this,'card')"><i class="fa fa-credit-card"></i> Credit Card</div>
+            <div class="pay-method" onclick="selectPayment(this,'upi')"><i class="fa fa-mobile-alt"></i> UPI</div>
+            <div class="pay-method" onclick="selectPayment(this,'netbanking')"><i class="fa fa-university"></i> Net Banking</div>
+          </div>
+          <div id="payment-fields">
+            <div class="form-group"><label>Card Number</label><input type="text" id="book-card" placeholder="1234 5678 9012 3456" maxlength="19"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Expiry</label><input type="text" id="book-expiry" placeholder="MM/YY"></div>
+              <div class="form-group"><label>CVV</label><input type="text" id="book-cvv" placeholder="123" maxlength="3"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:16px;margin-top:8px" onclick="confirmBooking()">
+            <i class="fa fa-lock"></i> Confirm & Pay
+          </button>
+        </div>
+      </div>
+      <div>
+        <div class="booking-summary" id="booking-summary-box"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: DASHBOARD ==================== -->
+<div id="page-dashboard" class="page">
+  <div class="dashboard-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo" style="color:#fff;font-size:18px"><div class="logo-icon" style="background:var(--orange)"><i class="fa fa-hotel"></i></div>&nbsp;Stay<span style="color:var(--orange)">India</span></div>
+      </div>
+      <nav>
+        <div class="sidebar-link active" onclick="showTab('tab-overview')"><i class="fa fa-th-large"></i> Overview</div>
+        <div class="sidebar-link" onclick="showTab('tab-bookings')"><i class="fa fa-calendar-check"></i> My Bookings</div>
+        <div class="sidebar-link" onclick="showTab('tab-profile')"><i class="fa fa-user"></i> Profile</div>
+        <div class="sidebar-link" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;margin-top:16px" onclick="logout()"><i class="fa fa-sign-out-alt"></i> Logout</div>
+        <div class="sidebar-link" onclick="showPage('page-home')"><i class="fa fa-home"></i> Back to Site</div>
+      </nav>
+    </div>
+    <div class="main-content">
+      <!-- OVERVIEW TAB -->
+      <div class="tab-content active fade-in" id="tab-overview">
+        <div class="dash-header">
+          <h1>Welcome back, <span id="dash-username" style="color:var(--orange)"></span>!</h1>
+          <button class="btn btn-primary btn-sm" onclick="showPage('page-home')"><i class="fa fa-plus"></i> New Booking</button>
+        </div>
+        <div class="stats-grid" id="dash-stats"></div>
+        <div class="table-card">
+          <div class="table-header"><h3>Recent Bookings</h3></div>
+          <div id="dash-recent-table"></div>
+        </div>
+      </div>
+      <!-- BOOKINGS TAB -->
+      <div class="tab-content" id="tab-bookings">
+        <div class="dash-header"><h1>My Bookings</h1></div>
+        <div class="table-card">
+          <div class="table-header">
+            <h3>All Bookings</h3>
+            <span id="booking-count-badge" style="background:var(--orange-light);color:var(--orange);padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700"></span>
+          </div>
+          <div id="all-bookings-table"></div>
+        </div>
+      </div>
+      <!-- PROFILE TAB -->
+      <div class="tab-content" id="tab-profile">
+        <div class="dash-header"><h1>My Profile</h1></div>
+        <div class="form-card" style="max-width:500px">
+          <h2>Account Details</h2>
+          <p>Manage your personal information</p>
+          <div id="profile-form"></div>
+          <button class="btn btn-primary" onclick="saveProfile()"><i class="fa fa-save"></i> Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: ADMIN ==================== -->
+<div id="page-admin" class="page">
+  <div class="dashboard-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo" style="color:#fff;font-size:18px"><div class="logo-icon" style="background:#ef4444"><i class="fa fa-shield-alt"></i></div>&nbsp;Admin<span style="color:#ef4444">Panel</span></div>
+      </div>
+      <nav>
+        <div class="sidebar-link active" onclick="showAdminTab('admin-tab-overview')"><i class="fa fa-chart-bar"></i> Dashboard</div>
+        <div class="sidebar-link" onclick="showAdminTab('admin-tab-bookings')"><i class="fa fa-list-alt"></i> All Bookings</div>
+        <div class="sidebar-link" onclick="showAdminTab('admin-tab-users')"><i class="fa fa-users"></i> Users</div>
+        <div class="sidebar-link" onclick="showAdminTab('admin-tab-hotels')"><i class="fa fa-hotel"></i> Hotels</div>
+        <div class="sidebar-link" style="margin-top:16px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px" onclick="logout()"><i class="fa fa-sign-out-alt"></i> Logout</div>
+        <div class="sidebar-link" onclick="showPage('page-home')"><i class="fa fa-home"></i> View Site</div>
+      </nav>
+    </div>
+    <div class="main-content">
+      <!-- ADMIN OVERVIEW -->
+      <div class="tab-content active fade-in" id="admin-tab-overview">
+        <div class="dash-header">
+          <h1>Admin Dashboard</h1>
+          <span style="background:#fee2e2;color:#dc2626;padding:5px 14px;border-radius:20px;font-size:12.5px;font-weight:700"><i class="fa fa-shield-alt"></i> Admin Access</span>
+        </div>
+        <div class="stats-grid" id="admin-stats"></div>
+        <div class="table-card">
+          <div class="table-header"><h3>Recent Bookings (All Users)</h3></div>
+          <div id="admin-recent-table"></div>
+        </div>
+      </div>
+      <!-- ADMIN BOOKINGS -->
+      <div class="tab-content" id="admin-tab-bookings">
+        <div class="dash-header"><h1>All Bookings</h1></div>
+        <div class="table-card">
+          <div class="table-header"><h3>Complete Booking History</h3></div>
+          <div id="admin-all-bookings-table"></div>
+        </div>
+      </div>
+      <!-- ADMIN USERS -->
+      <div class="tab-content" id="admin-tab-users">
+        <div class="dash-header"><h1>Registered Users</h1></div>
+        <div class="table-card">
+          <div class="table-header"><h3>User Management</h3></div>
+          <div id="admin-users-table"></div>
+        </div>
+      </div>
+      <!-- ADMIN HOTELS -->
+      <div class="tab-content" id="admin-tab-hotels">
+        <div class="dash-header"><h1>Hotel Inventory</h1></div>
+        <div class="table-card">
+          <div class="table-header"><h3>All Listed Hotels</h3></div>
+          <div id="admin-hotels-table"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>window.onload = init;</script>
+</body>
+</html>
