@@ -485,12 +485,15 @@ function confirmBooking(){
     status:'confirmed',
     payMethod:state.paymentMethod==='card'?'Credit Card':state.paymentMethod==='upi'?'UPI':'Net Banking',
     bookedAt:new Date().toISOString().split('T')[0]
+  
+
   };
   state.bookings.push(booking);
   save();
   toast('🎉 Booking confirmed! Booking ID: '+booking.id);
   showDashboard();
 }
+sendBookingEmail();
 
 // ===================== DASHBOARD =====================
 function showDashboard(){
@@ -676,4 +679,32 @@ function init(){
     const el=document.getElementById(id);
     if(el) el.addEventListener('change',updateBookingSummary);
   });
+}
+// email verification
+function sendBookingEmail(){
+
+emailjs.send("service_xxxxx","template_xxxxx",{
+
+to_email: document.getElementById("book-email").value,
+
+name: document.getElementById("book-fname").value,
+
+hotel: state.currentHotel.name,
+
+room: state.currentRoom.name,
+
+checkin: document.getElementById("book-checkin").value,
+
+checkout: document.getElementById("book-checkout").value,
+
+guests: document.getElementById("book-guests").value
+
+})
+
+.then(function(response){
+console.log("Email sent successfully");
+}, function(error){
+console.log("Email failed", error);
+});
+
 }
