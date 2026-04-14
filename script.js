@@ -472,6 +472,7 @@ function confirmBooking(){
   const subtotal=r.price*nights;
   const tax=Math.round(subtotal*0.12);
   const total=subtotal+tax;
+  
 
   const booking={
     id:'BK'+String(Date.now()).slice(-6),
@@ -490,10 +491,12 @@ function confirmBooking(){
   };
   state.bookings.push(booking);
   save();
+  sendBookingEmail();
   toast('🎉 Booking confirmed! Booking ID: '+booking.id);
   showDashboard();
+  
 }
-sendBookingEmail();
+
 
 // ===================== DASHBOARD =====================
 function showDashboard(){
@@ -680,31 +683,24 @@ function init(){
     if(el) el.addEventListener('change',updateBookingSummary);
   });
 }
-// email verification
 function sendBookingEmail(){
 
-emailjs.send("service_xxxxx","template_xxxxx",{
-
-to_email: document.getElementById("book-email").value,
+emailjs.send("service_ejge727","template_4t7ehx9",{
 
 name: document.getElementById("book-fname").value,
-
+email: document.getElementById("book-email").value,
+phone: document.getElementById("book-phone").value,
 hotel: state.currentHotel.name,
-
 room: state.currentRoom.name,
-
 checkin: document.getElementById("book-checkin").value,
-
 checkout: document.getElementById("book-checkout").value,
-
 guests: document.getElementById("book-guests").value
 
-})
-
-.then(function(response){
-console.log("Email sent successfully");
-}, function(error){
-console.log("Email failed", error);
+}).then(function(){
+console.log("Email sent");
+},function(error){
+console.log("Email failed",error);
 });
 
 }
+
